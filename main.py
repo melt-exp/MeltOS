@@ -3,18 +3,24 @@ import os
 from os.path import exists
 import sys
 import platform
+import requests
 
-pltfm = platform.system() # get user OS
+pltfm = platform.system() # get user OS (for pltfm detection and host cmd)
+hsarc = platform.machine() # get user arch (e.g. x86_64, armhf, i386, etc) (for host cmd)
 
 if(pltfm!="Linux"): # if user is not using linux, warn them
-	suphn = input("MeltOS has detected your OS as " + pltfm +", but MeltOS is designed for Linux. Are you sure you want to continue? (Y/n): ")
+	cptqn = input("MeltOS has detected your OS as " + pltfm +", but MeltOS is designed for Linux. Are you sure you want to continue? (Y/n): ")
 	if(suphn!="y"):
-		print("You selected " + suphn)
+		print("You selected " + cptqn)
 		print("Exiting...")
 		exit()
 
 os.system("clear") # clear the screen
-print("------------------------------------------------\n| MeltOS - v0.1.2.2 MIT License                |\n| It's not really an OS, just a python script! |\n------------------------------------------------") # this is the intro box thing
+print("""------------------------------------------------
+| MeltOS - v0.1.3 MIT License                  |
+| It's not really an OS, just a python script! |
+------------------------------------------------
+""") # this is the intro box thing
 def read_cmd(cmd): # this reads the given command. coolio, right?
 	if(cmd[0:4]=="exit" and len(cmd)==4): # this code exits back to the normal stuff
 		print("Exiting gracefully...")
@@ -35,14 +41,14 @@ def read_cmd(cmd): # this reads the given command. coolio, right?
 		if(len(cmd)==3 or len(cmd)==5):
 			os.system("clear")
 		else:
-			print("E: \"" + cmd + "'| not found or improper") # this is here because of weird code stuff
+			print("E: \"" + cmd + "'| not found or improper.") # this is here because of weird code stuff
 	elif(cmd[0:5]=="wget " and len(cmd)>=5): # crudely use wget using os.system
 		os.system("wget " + cmd[5:len(cmd)] + " >> " + homedir + "/tmp.txt")
 		with open(homedir + "/tmp.txt", "r") as out: # this code sucks
 			print(out.read())
 	elif(cmd[0:6]=="shell " and len(cmd)>=6): # crudely use any normal command in normal normalness?
 		os.system(cmd[6:len(cmd)] + " >> " + homedir + "/tmp.txt")
-		with open(homedir + "/tmp.txt", "r") as out: # this code sucks x2
+		with open(homedir + "/tmp.txt", "r") as out: # this code sucks x3
 			print(out.read())
 	elif(cmd[0:5]=="echo " and len(cmd)>=5): # echo the inputted text, simple
 		print(cmd[5:len(cmd)])
@@ -58,8 +64,17 @@ def read_cmd(cmd): # this reads the given command. coolio, right?
 				print(line.strip()) # use line.strip or i will come for you in your sleep
 	elif(cmd[0:4]=="py3 " and len(cmd)>=4): # run a python script in a python script. sounds cool to me
 		exec(open(cmd[4:len(cmd)]).read())
+	elif(cmd[0:4]=="host" and len(cmd)==4): # give host info
+		print("Host OS: " + pltfm + "\nHost Architecture: " + hsarc)
+	elif(cmd[0:4]=="get " and len(cmd)>=4): # package manager thing ig
+		if(cmd[4:7]=="-py"): # if py, get py, else get moexe
+			print("Installing \"" + cmd[8:len(cmd)] + ".py\" from meltos.wens.cf..." )
+			read_cmd("shell curl -0 'https://meltos.wens.cf/python/" + cmd[8:len(cmd)] + ".py' >> " + cmd[8:len(cmd)] + ".py")
+		else:
+			print("Installing \"" + cmd[4:len(cmd)] + ".moexe\" from meltos.wens.cf..." )
+			read_cmd("shell curl -0 'https://meltos.wens.cf/moexe/" + cmd[4:len(cmd)] + ".moexe' >> " + cmd[4:len(cmd)] + ".moexe")
 	else: # if all else fails, give an error
-		print("E: \"" + cmd + "\" not found or improper")
+		print("E: \"" + cmd + "\" not found or improper.")
 homedir = os.getcwd() # set the home directory to the init location
 
 while True:
