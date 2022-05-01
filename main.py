@@ -9,14 +9,28 @@ hsarc = platform.machine() # get user arch (e.g. x86_64, armhf, i386, etc) (for 
 
 if(pltfm!="Linux"): # if user is not using linux, warn them
 	cptqn = input("MeltOS has detected your OS as " + pltfm +", but MeltOS is designed for Linux. Are you sure you want to continue? (Y/n): ")
-	if(suphn!="y"):
+	if(cptqn!="y"):
 		print("You selected " + cptqn)
 		print("Exiting...")
 		exit()
+mover = "v0.1.3.3"
+os.system("curl -s 'https://meltos.wens.cf/newest' -O")
+filepath = "newest"
+with open(filepath) as fp:
+	for index, line in enumerate(fp):
+		monewestver = line.strip()
+if(monewestver!=mover):
+	verqn = input("MeltOS has detected you are running " + str(mover) +", but the newest MeltOS version is " + str(monewestver) + ". Are you sure you want to continue? (Y/n): ")
+	if(verqn!="y"):
+		print("You selected " + verqn)
+		print("Exiting...")
+		os.remove("newest")
+		exit()	
+os.remove("newest")
 
 os.system("clear") # clear the screen
 print("""------------------------------------------------
-| MeltOS - v0.1.3.2 MIT License                |
+| MeltOS - """ + mover + """ MIT License                |
 | It's not really an OS, just a python script! |
 ------------------------------------------------
 """) # this is the intro box thing
