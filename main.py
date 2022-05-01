@@ -17,7 +17,7 @@ if(pltfm!="Linux"): # if user is not using linux, warn them
 
 os.system("clear") # clear the screen
 print("""------------------------------------------------
-| MeltOS - v0.1.3 MIT License                  |
+| MeltOS - v0.1.3.1 MIT License                |
 | It's not really an OS, just a python script! |
 ------------------------------------------------
 """) # this is the intro box thing
@@ -68,11 +68,11 @@ def read_cmd(cmd): # this reads the given command. coolio, right?
 		print("Host OS: " + pltfm + "\nHost Architecture: " + hsarc)
 	elif(cmd[0:4]=="get " and len(cmd)>=4): # package manager thing ig
 		if(cmd[4:7]=="-py"): # if py, get py, else get moexe
-			print("Installing \"" + cmd[8:len(cmd)] + ".py\" from meltos.wens.cf..." )
-			read_cmd("shell curl -0 'https://meltos.wens.cf/python/" + cmd[8:len(cmd)] + ".py' >> " + cmd[8:len(cmd)] + ".py")
+			print("Installing \"" + cmd[8:len(cmd)] + ".py\" from meltos.wens.cf...\n")
+			read_cmd("shell curl -0 'https://meltos.wens.cf/python/" + cmd[8:len(cmd)] + ".py' -O")
 		else:
-			print("Installing \"" + cmd[4:len(cmd)] + ".moexe\" from meltos.wens.cf..." )
-			read_cmd("shell curl -0 'https://meltos.wens.cf/moexe/" + cmd[4:len(cmd)] + ".moexe' >> " + cmd[4:len(cmd)] + ".moexe")
+			print("Installing \"" + cmd[4:len(cmd)] + ".moexe\" from meltos.wens.cf...\n")
+			read_cmd("shell curl -0 'https://meltos.wens.cf/moexe/" + cmd[4:len(cmd)] + ".moexe' -O")
 	else: # if all else fails, give an error
 		print("E: \"" + cmd + "\" not found or improper.")
 homedir = os.getcwd() # set the home directory to the init location
