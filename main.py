@@ -1,9 +1,8 @@
 # these imports are important
 import os
 from os.path import exists
-import sys
 import platform
-import requests
+import time
 
 pltfm = platform.system() # get user OS (for pltfm detection and host cmd)
 hsarc = platform.machine() # get user arch (e.g. x86_64, armhf, i386, etc) (for host cmd)
@@ -17,7 +16,7 @@ if(pltfm!="Linux"): # if user is not using linux, warn them
 
 os.system("clear") # clear the screen
 print("""------------------------------------------------
-| MeltOS - v0.1.3.1 MIT License                |
+| MeltOS - v0.1.3.2 MIT License                |
 | It's not really an OS, just a python script! |
 ------------------------------------------------
 """) # this is the intro box thing
@@ -73,6 +72,8 @@ def read_cmd(cmd): # this reads the given command. coolio, right?
 		else:
 			print("Installing \"" + cmd[4:len(cmd)] + ".moexe\" from meltos.wens.cf...\n")
 			read_cmd("shell curl -0 'https://meltos.wens.cf/moexe/" + cmd[4:len(cmd)] + ".moexe' -O")
+	elif(cmd[0:5]=="wait " and len(cmd)>=5):
+		time.sleep(int(cmd[5:len(cmd)]))
 	else: # if all else fails, give an error
 		print("E: \"" + cmd + "\" not found or improper.")
 homedir = os.getcwd() # set the home directory to the init location
