@@ -34,6 +34,15 @@ moi = exists(homedir + "/tmp")
 if(not moi):
 	os.mkdir(homedir + "/tmp")
 	getupdate()
+else: 
+	filepath = homedir + "/tmp/list"
+	with open(filepath) as fp:
+		for index, line in enumerate(fp):
+			molst = line.strip()
+	filepath = homedir + "/tmp/list-py"
+	with open(filepath) as fp:
+		for index, line in enumerate(fp):
+			pylst = line.strip()
 
 if(pltfm!="Linux"): # if user is not using linux, warn them
 	cptqn = input("MeltOS has detected your OS as " + pltfm +", but MeltOS is designed for Linux. Are you sure you want to continue? (Y/n): ")
@@ -42,7 +51,7 @@ if(pltfm!="Linux"): # if user is not using linux, warn them
 		print("Exiting...")
 		exit()
 		
-mover = "v0.1.4"
+mover = "v0.1.4.1"
 os.chdir(homedir + "/tmp")
 os.system("curl -s 'https://meltos.wens.cf/newest' -O")
 filepath = homedir + "/tmp/newest"
@@ -61,7 +70,7 @@ os.chdir("..")
 
 os.system("clear") # clear the screen
 print("""------------------------------------------------
-| MeltOS - """ + mover + """ MIT License                  |
+| MeltOS - """ + mover + """ MIT License                |
 | It's not really an OS, just a python script! |
 ------------------------------------------------
 """) # this is the intro box thing
@@ -115,15 +124,21 @@ def read_cmd(cmd): # this reads the given command. coolio, right?
 		if(cmd[4:10]=="update"):
 			getupdate()
 		elif(cmd[4:7]=="-py"): # if py, get py, else get moexe
-			print("Installing \"" + cmd[8:len(cmd)] + ".py\" from meltos.wens.cf...\n")
-			read_cmd("shell curl -0 'https://meltos.wens.cf/python/" + cmd[8:len(cmd)] + ".py' -O")
+			if(cmd[8:len(cmd)] in pylst):
+				print("Installing \"" + cmd[8:len(cmd)] + ".py\" from meltos.wens.cf...\n")
+				read_cmd("shell curl -0 'https://meltos.wens.cf/python/" + cmd[8:len(cmd)] + ".py' -O")
+			else:
+				print("E: Could not find " + cmd[8:len(cmd)] + " in package list. Try running \"get update\".")
 		else:
-			prevdir = os.getcwd()
-			read_cmd("cd " + homedir + "/mox") # move to homedir/mox
-			print("I: Moved to homedir/mox to allow support for moexe integration.")
-			print("Installing \"" + cmd[4:len(cmd)] + ".moexe\" from meltos.wens.cf...\n")
-			read_cmd("shell curl -0 'https://meltos.wens.cf/moexe/" + cmd[4:len(cmd)] + ".moexe' -O")
-			read_cmd("cd " + prevdir)
+			if(cmd[4:len(cmd)] in molst):
+				prevdir = os.getcwd()
+				read_cmd("cd " + homedir + "/mox") # move to homedir/mox
+				print("I: Moved to homedir/mox to allow support for moexe integration.")
+				print("Installing \"" + cmd[4:len(cmd)] + ".moexe\" from meltos.wens.cf...\n")
+				read_cmd("shell curl -0 'https://meltos.wens.cf/moexe/" + cmd[4:len(cmd)] + ".moexe' -O")
+				read_cmd("cd " + prevdir)
+			else:
+				print("E: Could not find " + cmd[4:len(cmd)] + " in package list. Try running \"get update\".")
 	elif(cmd[0:5]=="wait " and len(cmd)>=5):
 		time.sleep(int(cmd[5:len(cmd)]))
 	elif(cmd[0:2]=="hd" and len(cmd)==2):
