@@ -22,7 +22,7 @@ wget\*
 
 ## Progress
 <!-- bars from https://changaco.oy.lc/unicode-progress-bars/ -->
-### v0.1.4.2
-▰▰▰▰▰▰▰▰▰▰▰▰▱ 95%
+### v0.1.*.* (next mi/p)
+▱▱▱▱▱▱▱▱▱▱▱▱▱ 0%
 ### v1
 ▱▱▱▱▱▱▱▱▱▱▱▱▱ 0%
