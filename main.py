@@ -68,7 +68,7 @@ if(pltfm!="Linux"): # if user is not using linux, warn them
 		
 mover = "v0.1.4.2"
 os.chdir(homedir + "/tmp")
-os.system("curl -s 'https://meltos.wens.cf/newest' -O")
+os.system("curl -s " + getrepo + "/newest -O")
 filepath = homedir + "/tmp/newest"
 with open(filepath) as fp:
 	for index, line in enumerate(fp):
