@@ -50,7 +50,7 @@ else:
 		for index, line in enumerate(fp):
 			pylst = line.strip()
 # check for get config
-moi = exists(homedir + "/tmp/getrepo.cfg")
+moi = exists(f"{homedir}/tmp/getrepo.cfg")
 if(moi):
 	filepath = f"{homedir}/tmp/getrepo.cfg"
 	with open(filepath) as fp:
@@ -178,7 +178,7 @@ def read_cmd(cmd): # this reads the given command. coolio, right?
 				if(moi):
 					os.remove(f"{homedir}/tmp/getrepo.cfg")
 				# CRITICAL: make file and write new url
-				print('Set get repo to "' + cmd[3:len(cmd)] + '".')
+				print(f'Set get repo to "{cmd[3:len(cmd)]}}".')
 	elif(cmd[0:4]=="help" and len(cmd)==4):
 		print(cmds)
 	elif(cmd[0:7]=="cmpdocs" and len(cmd)==7):
