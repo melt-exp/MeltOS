@@ -38,7 +38,7 @@ if(not moi):
 	os.mkdir(f"{homedir}/apps/py3")
 moi = exists(f"{homedir}/tmp")
 if(not moi):
-	os.mkdir(f"{homedir}/tmp)
+	os.mkdir(f"{homedir}/tmp")
 	getupdate()
 else: 
 	filepath = f"{homedir}/tmp/list"
