@@ -213,7 +213,7 @@ while True:
 	tmpexists = exists(f"{homedir}/tmp/old_out") # check if tmp.txt exists
 	if(tmpexists): # if it exists, KILL IT WITH FIRE
 		os.remove(f"{homedir}/tmp/old_out")
-	icmd = f"{username}@{cwd}:"
+	icmd = f"{username}@{cwd}: "
 	try: # thanks to Mwalters75 on GitHub for the keyboard interrupt ignorer
 		pcmd = input(icmd) # username@cwd combo
 		read_cmd(pcmd) # run the cmd, duh
