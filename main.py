@@ -11,7 +11,7 @@ def getupdate(): # update
 	prevdir = os.getcwd()
 	os.chdir(f"{homedir}/tmp")
 	print("Step 1/3 complete.")
-	os.system(f"curl -s '{getrepo}moexe/list' -O")
+	os.system(f"curl -s {getrepo}moexe/list -O")
 	filepath = f"{homedir}/tmp/list"
 	with open(filepath) as fp:
 		for index, line in enumerate(fp):
