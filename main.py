@@ -178,7 +178,7 @@ def read_cmd(cmd): # this reads the given command. coolio, right?
 				if(moi):
 					os.remove(f"{homedir}/tmp/getrepo.cfg")
 				# CRITICAL: make file and write new url
-				print(f'Set get repo to "{cmd[3:len(cmd)]}}".')
+				print(f'Set get repo to "{cmd[3:len(cmd)]}".')
 	elif(cmd[0:4]=="help" and len(cmd)==4):
 		print(cmds)
 	elif(cmd[0:7]=="cmpdocs" and len(cmd)==7):
@@ -189,7 +189,7 @@ def read_cmd(cmd): # this reads the given command. coolio, right?
 		if(splcmd!=[]):
 			moe = exists(f"{homedir}/apps/mox/{splcmd[0]}.moexe")
 			if(moe):
-				read_cmd(f"scr{homedir}/apps/mox/{splcmd[0]}.moexe)
+				read_cmd(f"scr{homedir}/apps/mox/{splcmd[0]}.moexe")
 			else:
 				moe = exists(f"{homedir}/apps/py3/{splcmd[0]}.py")
 				if(moe):
@@ -211,7 +211,7 @@ while True:
 	username = os.getlogin() # get the user's username for the username@cwd combo
 	tmpexists = exists(f"{homedir}/tmp/old_out") # check if tmp.txt exists
 	if(tmpexists): # if it exists, KILL IT WITH FIRE
-		os.remove(hf"{homedir}/tmp/old_out")
+		os.remove(f"{homedir}/tmp/old_out")
 	icmd = f"{username}@{cwd}:"
 	try: # thanks to Mwalters75 on GitHub for the keyboard interrupt ignorer
 		pcmd = input(icmd) # username@cwd combo
