@@ -21,7 +21,5 @@ curl\*\*
 
 ## Progress
 <!-- bars from https://changaco.oy.lc/unicode-progress-bars/ -->
-### v0.1.\*.\* (next mi/p)
-▱▱▱▱▱▱▱▱▱▱▱▱▱ 0%
 ### v1
-▱▱▱▱▱▱▱▱▱▱▱▱▱ 0%
+▰▰▰▰▰▰▰▰▰▰▰▱▱ 85%
