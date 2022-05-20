@@ -1,220 +1,213 @@
-# these imports are important
-import os, platform, time
-from os.path import exists
+# Import dependencies.
+import os, platform, webbrowser, time
+from colorama import Fore
 
-homedir = os.getcwd() # set the home directory to the init location
-pltfm = platform.system() # get user OS (for pltfm detection and host cmd)
-hsarc = platform.machine() # get user arch (e.g. x86_64, armhf, i386, etc) (for host cmd)
+# Prepare for homedir setting (and set homedir) by making/checking for meltos
+cce = os.path.isdir(os.getcwd() +  '/meltos')
+if(not cce):
+  os.mkdir(os.getcwd() + '/meltos')
 
-def getupdate(): # update
-	print("Updating get...")
-	prevdir = os.getcwd()
-	os.chdir(f"{homedir}/tmp")
-	print("Step 1/3 complete.")
-	os.system(f"curl -s '{getrepo}moexe/list' -O")
-	filepath = f"{homedir}/tmp/list"
-	with open(filepath) as fp:
-		for index, line in enumerate(fp):
-			molst = line.strip()
-	print("Step 2/3 complete.")
-	os.system(f"curl -s '{getrepo}/python/list-py' -O")
-	filepath = homedir + "/tmp/list-py"
-	with open(filepath) as fp:
-		for index, line in enumerate(fp):
-			pylst = line.strip()
-	print("Step 3/3 complete.")
-	os.chdir(prevdir)
-	print("Update completed.")
+# Set homedir, machineos, and version.
+home = os.getcwd() + '/meltos'
+machineos = platform.system()
+version = 'v1'
 
-# create important dirs
-moi = exists(f"{homedir}/apps")
-if(not moi):
-	os.mkdir(f"{homedir}/apps")
-moi = exists(f"{homedir}/apps/mox")
-if(not moi):
-	os.mkdir(f"{homedir}/apps/mox")
-moi = exists(f"{homedir}/apps/py3")
-if(not moi):
-	os.mkdir(f"{homedir}/apps/py3")
-moi = exists(f"{homedir}/tmp")
-if(not moi):
-	os.mkdir(f"{homedir}/tmp")
-	getupdate()
-else: 
-	filepath = f"{homedir}/tmp/list"
-	with open(filepath) as fp:
-		for index, line in enumerate(fp):
-			molst = line.strip()
-	filepath = f"{homedir}/tmp/list-py"
-	with open(filepath) as fp:
-		for index, line in enumerate(fp):
-			pylst = line.strip()
-# check for get config
-moi = exists(f"{homedir}/tmp/getrepo.cfg")
-if(moi):
-	filepath = f"{homedir}/tmp/getrepo.cfg"
-	with open(filepath) as fp:
-		for index, line in enumerate(fp):
-			getrepo = line.strip()
+# Define 'spiterror' (throw colorized error)
+def spiterror(error):
+  print(Fore.RED + 'ERROR' + Fore.WHITE + ': ' + error)
+
+# Define 'spitwarn' (throw colorized warning)
+def spitwarn(warn):
+  print(Fore.YELLOW + 'WARN' + Fore.WHITE + ': ' + warn)
+
+# Define 'dlfile' (download file).
+def dlfile(url):
+  os.system(f"curl -s -f '{url}' -O") # Use cURL for downloading files.
+
+# Define 'dlfilenamed' (download named file).
+def dlfilenamed(url, name, parm):
+  # Use cURL for downloading files.
+  if(parm):
+    os.system(f"curl -f '{url}' -o {name}")
+  else:
+    os.system(f"curl -s -f '{url}' -o {name}")
+
+# Define 'changedir' (change current working directory):
+def changedir(dir):
+  try:
+    os.chdir(dir)
+  except FileNotFoundError:
+    spiterror(f'{dir} does not exist!')
+  except NotADirectoryError:
+    spiterror(f'{dir} is not a valid directory!')
+  except PermissionError:
+    spiterror(f'{dir} requires greater permissions!')
+
+# Define 'getupdates' (update get lists).	
+def getupdates():
+  print('Updating get repository lists...')
+  previousdirectory = os.getcwd()
+  changedir(f'{home}/tmp')
+  dlfile('https://meltos.wens.cf/moexe/list')
+  dlfile('https://meltos.wens.cf/python/list-py')
+  changedir(previousdirectory)
+  print('Update completed!')
+
+# Define 'clearscreen' (clear the terminal).
+def clearscreen():
+  if(machineos=='Linux'):
+    os.system('clear')
+  elif(machineos=='Windows'):
+    os.system('cls')
+  else:
+    spiterror('The clear function is not supported on your machine!')
+
+clearscreen()
+# Go to home directory
+changedir(home)
+
+# Check for needed files and folders, if they don't exist, make them.
+cce = os.path.isdir(f'{home}/tmp')
+if(cce): 
+  if(os.path.exists(f"{home}/tmp/list") and os.path.exists(f"{home}/tmp/list-py")):
+    filepath = f"{home}/tmp/list"
+    with open(filepath) as fp:
+      for index, line in enumerate(fp):
+        moexelist = line.strip()
+    filepath = f"{home}/tmp/list-py"
+    with open(filepath) as fp:
+      for index, line in enumerate(fp):
+        pythonlist = line.strip()
+  else:
+    getupdates()
+    filepath = f"{home}/tmp/list"
+    with open(filepath) as fp:
+      for index, line in enumerate(fp):
+        moexelist = line.strip()
+    filepath = f"{home}/tmp/list-py"
+    with open(filepath) as fp:
+      for index, line in enumerate(fp):
+        pythonlist = line.strip()
 else:
-	getrepo = "https://meltos.wens.cf/"
+  os.mkdir(f'{home}/tmp')
+  getupdates()
+  filepath = f"{home}/tmp/list"
+  with open(filepath) as fp:
+    for index, line in enumerate(fp):
+      moexelist = line.strip()
+  filepath = f"{home}/tmp/list-py"
+  with open(filepath) as fp:
+    for index, line in enumerate(fp):
+      pythonlist = line.strip()
 
-if(pltfm!="Linux"): # if user is not using linux, warn them
-	cptqn = input(f"MeltOS has detected your OS as {pltfm}, but MeltOS is designed for Linux. Are you sure you want to continue? (Y/n): ")
-	if(cptqn!="y"):
-		print(f"You selected {cptqn}")
-		print("Exiting...")
-		exit()
-		
-mover = "v0.1.4.2"
-os.chdir(f"{homedir}/tmp")
-os.system("curl -s 'https://meltos.wens.cf/newest' -O")
-filepath = f"{homedir}/tmp/newest"
-with open(filepath) as fp:
-	for index, line in enumerate(fp):
-		monewestver = line.strip()
-if(monewestver!=mover):
-	verqn = input(f"MeltOS has detected you are running {str(mover)}, but the newest MeltOS version is " + str(monewestver) + ". Are you sure you want to continue? (Y/n): ")
-	if(verqn!="y"):
-		print(f"You selected {verqn}")
-		print("Exiting...")
-		os.remove("newest")
-		exit()	
-os.remove("newest")
-os.chdir("..")
+cce = os.path.isdir(f'{home}/apps')
+if(cce): 
+  pass
+else:
+  os.mkdir(f'{home}/apps')
+  os.mkdir(f'{home}/apps/moexe')
+  os.mkdir(f'{home}/apps/python')
 
-os.system("clear") # clear the screen
-print(f"""------------------------------------------------
-| MeltOS - { mover } MIT License                |
-| It's not really an OS, just a python script! |
-------------------------------------------------
-""") # this is the intro box thing
-cmds = ["exit", "dir", "cd", "clear", "cls", "curl", "shell", "echo", "scr", "read", "py3", "host", "get", "wait", "hd", "gr", "help", "cmpdocs"]
-def read_cmd(cmd): # this reads the given command. coolio, right?
-	global getrepo
-	if(cmd[0:4]=="exit" and len(cmd)==4): # this code exits back to the normal stuff
-		print("Exiting gracefully...")
-		os.system("clear")
-		exit()
-	elif(cmd[0:3]=="dir" and len(cmd)==3): # print the directory
-		print(os.listdir(cwd)) # this is fine
-	elif(cmd[0:3]=="cd " and len(cmd)>=4): # change the cwd... very simple
-		try:
-			os.chdir(cmd[3:len(cmd)]) # tries to change dir, errors are self-explanitory (i think i didn't spell that right)
-		except FileNotFoundError:
-			print(f"E: {cmd[3:len(cmd)]}  does not exist")
-		except NotADirectoryError:
-			print(f"E: {cmd[3:len(cmd)]} is not a directory")
-		except PermissionError:
-			print(f"E:  { cmd[3:len(cmd)] } is beyond your permissions")
-	elif(cmd[0:5]=="clear" or cmd[0:3]=="cls"): # if command is clear or cls, clear screen. duh
-		if(len(cmd)==3 or len(cmd)==5):
-			os.system("clear")
-		else:
-			cmdnotfound(cmd)
-	elif(cmd[0:5]=="curl " and len(cmd)>=5): # crudely use curl using shell
-		read_cmd(f"shell curl { cmd[5:len(cmd)]}")
-	elif(cmd[0:6]=="shell " and len(cmd)>=6): # crudely use any normal command in normal normalness?
-		os.system(f"{cmd[6:len(cmd)]} >> {homedir}/tmp/old_out")
-		with open(f"{homedir}/tmp/old_out", "r") as out: # this code sucks x3
-			print(out.read())
-	elif(cmd[0:5]=="echo " and len(cmd)>=5): # echo the inputted text, simple
-		print(cmd[5:len(cmd)])
-	elif(cmd[0:4]=="scr " and len(cmd)>=4): # run a .moexe script
-		filepath = cmd[4:len(cmd)]
-		with open(filepath) as fp:
-			for index, line in enumerate(fp):
-				read_cmd(line.strip())
-	elif(cmd[0:5]=="read " and len(cmd)>=5):
-		filepath = cmd[5:len(cmd)]
-		with open(filepath) as fp:
-			for index, line in enumerate(fp):
-				print(line.strip()) # use line.strip or i will come for you in your sleep
-	elif(cmd[0:4]=="py3 " and len(cmd)>=4): # run a python script in a python script. sounds cool to me
-		exec(open(cmd[4:len(cmd)]).read())
-	elif(cmd[0:4]=="host" and len(cmd)==4): # give host info
-		print(f"Host OS: {pltfm}\nHost Architecture: {hsarc}")
-	elif(cmd[0:4]=="get " and len(cmd)>=4): # package manager thing ig
-		if(pltfm!="Linux"):
-			print(f'W: Your platform is \'{pltfm}\', but get is designed for Linux.')
-		if(cmd[4:10]=="update"):
-			getupdate()
-		elif(cmd[4:7]=="-py"): # if py, get py, else get moexe
-			if(cmd[8:len(cmd)] in pylst):
-				prevdir = os.getcwd()
-				read_cmd(f"cd {homedir}/apps/mox") # move to homedir/apps/mox
-				print("I: Moved to homedir/apps/mox to allow support for moexe integration.")
-				print(f"Installing '{cmd[8:len(cmd)]}.py' from meltos.wens.cf...\n")
-				read_cmd(f"shell curl -0 '{getrepo}python/{cmd[8:len(cmd)]}.py' -O")
-				read_cmd(f"cd {prevdir}")
-			else:
-				print(f"E: Could not find {cmd[8:len(cmd)]} in package list. Try running \"get update\".")
-		else:
-			if(cmd[4:len(cmd)] in molst):
-				prevdir = os.getcwd()
-				read_cmd(f"cd {homedir}/apps/py3") # move to homedir/apps/mox
-				print("I: Moved to homedir/apps/py3 to allow support for python integration.")
-				print(f"Installing \"{cmd[4:len(cmd)]}.moexe\" from meltos.wens.cf...\n")
-				read_cmd(f"shell curl -0 '{getrepo}moexe/{cmd[4:len(cmd)]}.moexe' -O")
-				read_cmd(f"cd {prevdir}")
-			else:
-				print(f"E: Could not find {cmd[4:len(cmd)]} in package list. Try running \"get update\".")
-	elif(cmd[0:5]=="wait " and len(cmd)>=5):
-		time.sleep(int(cmd[5:len(cmd)]))
-	elif(cmd[0:2]=="hd" and len(cmd)==2):
-		print(f"Your home directory is \"{homedir}\".")
-	elif(cmd[0:2]=="gr" and len(cmd)>=2):
-		if(len(cmd)==2):
-			print(f"Your current get repository is \"{getrepo}\".")
-		else:
-			if(cmd[3:len(cmd)]=="default"):
-				moi = exists(f"{homedir}/tmp/getrepo.cfg")
-				if(moi):
-					os.remove(f"{homedir}/tmp/getrepo.cfg")
-				print('Set get repo to "https://meltos.wens.cf/".')
-			else:
-				getrepo = cmd[3:len(cmd)]
-				moi = exists(f"{homedir}/tmp/getrepo.cfg")
-				if(moi):
-					os.remove(f"{homedir}/tmp/getrepo.cfg")
-				# CRITICAL: make file and write new url
-				print(f'Set get repo to "{cmd[3:len(cmd)]}}".')
-	elif(cmd[0:4]=="help" and len(cmd)==4):
-		print(cmds)
-	elif(cmd[0:7]=="cmpdocs" and len(cmd)==7):
-		print("W: This is intended for development ONLY!")
-		os.system(f"echo AUTOMATICALLY COMPILED COMMAND LIST FOR {mover}:{str(cmds)} >> DOCS.md")
-	else: 
-		splcmd = cmd.split(None, 1)
-		if(splcmd!=[]):
-			moe = exists(f"{homedir}/apps/mox/{splcmd[0]}.moexe")
-			if(moe):
-				read_cmd(f"scr{homedir}/apps/mox/{splcmd[0]}.moexe)
-			else:
-				moe = exists(f"{homedir}/apps/py3/{splcmd[0]}.py")
-				if(moe):
-					read_cmd(f"py3 {homedir}/apps/py3/{splcmd[0]}.py")
-				else:
-					cmdnotfound(cmd)
-		else:
-			pass
-def cmdnotfound(cmd):
-	if(cmd in molst and len(cmd)!=0):
-		print(f'E: \'{cmd}\'not found, but can be installed using \"get \'{cmd} \'.')
-	elif(cmd in molst and len(cmd)!=0):
-		print(f'E: "{cmd}" not found, but can be installed using "get -py {cmd}".')
-	else:
-		print(f"E: \"{cmd}\" not found or improper.")
+changedir(f'{home}/tmp')
+dlfile("https://meltos.wens.cf/newest")
+with open(f'{home}/tmp/newest') as nwv:
+  for index, line in enumerate(nwv): 
+    newestversion = line.strip()
+if(newestversion!=version):
+  outdatedprompt = input(f"You're on MeltOS {version}, but the newest version is {newestversion}. Would you like to update? (Y/n): ")
+  if(outdatedprompt=="y"):
+    webbrowser.open('https://meltos.wens.cf/timetoupdate?version={version}')
+    time.sleep(1)
+    exit()
+  else:
+    print("Alright then.")
+changedir('..')
+if(os.path.exists(f'{home}/color.mocfg')):
+  with open(f'{home}/color.mocfg') as f:
+    for line in f:
+        color1 = eval('Fore.' + line)
+        color2 = eval('Fore.' + next(f,None))
+else:
+  color1 = Fore.BLUE
+  color2 = Fore.GREEN  
+cmdlist = ['help', 'cd', 'dir', 'echo', 'sleep', 'run', 'clear', 'cls', 'curl', 'exit', 'get', 'script']
+def interpretcmd(fullcmd):
+  cmd = fullcmd.split(None, 1)
+  if(cmd==[]):
+    pass
+  elif(cmd[0]=='help'):
+    print(cmdlist)
+  elif(cmd[0]=='cd'):
+    lencmd = len(cmd[0]) + 1
+    changedir(fullcmd[lencmd:len(fullcmd)])
+  elif(cmd[0]=='dir'):
+    print(os.listdir(os.getcwd()))
+  elif(cmd[0]=='echo'):
+    print(cmd[1])
+  elif(cmd[0]=='sleep'):
+    time.sleep(cmd[1])
+  elif(cmd[0]=='run'):
+    os.system(f'{cmd[1]} >> {home}/tmp/old_out')
+    with open(f"{home}/tmp/old_out", "r") as out: # copied code from v0.1.4.2
+      print(out.read())
+  elif(cmd[0]=='clear' or cmd[0]=='cls'):
+    clearscreen()
+  elif(cmd[0]=='curl'):
+    try:
+      interpretcmd(f"run curl -s '{cmd[1]}' -O")
+    except IndexError:
+      spiterror('You must provide a URL for curl to get!')
+  elif(cmd[0]=='exit'):
+    exit()
+  elif(cmd[0]=='get'):
+    if(machineos!='Linux'):
+      spitwarn(f'get is not designed for {machineos}. Experience may be impacted.')
+    try:
+      if(cmd[1]=='update'):
+       getupdates()
+      elif(cmd[1][0:3]=='-py'):
+        previousdirectory = os.getcwd()
+        changedir(f'{home}/apps/python')
+        dlfilenamed(f'https://meltos.wens.cf/python/{cmd[1][4:len(cmd[1])]}.py', f'{cmd[1][4:len(cmd[1])]}.py', True)
+        changedir(previousdirectory)
+      else:
+        previousdirectory = os.getcwd()
+        changedir(f'{home}/apps/moexe')
+        dlfilenamed(f'https://meltos.wens.cf/moexe/{cmd[1]}.moexe', f'{cmd[1]}.moexe', True)
+        changedir(previousdirectory)
+    except IndexError:
+      spiterror('You must provide an argument! (-py package, package, update)')
+  elif(cmd[0]=='script'):
+    if(cmd[1][0:3]=='-py'):
+      exec(open(cmd[1][4:len(cmd[1])]).read())
+    else:
+      filepath = cmd[1]
+      with open(filepath) as fp:
+        for index, line in enumerate(fp):
+         interpretcmd(line.strip())
+  else:
+    try:
+      if(os.path.exists(f'{home}/apps/moexe/{cmd[0]}.moexe')):
+        interpretcmd(f'script {home}/apps/moexe/{cmd[0]}.moexe')
+      elif(os.path.exists(f'{home}/apps/python/{cmd[0]}.py')):
+        interpretcmd(f'script -py {home}/apps/python/{cmd[0]}.py')
+      else:
+        if(moexelist.__contains__(cmd[0])):
+          spiterror(f'{cmd[0]} does not exist, but can be installed using "get {cmd[0]}"')
+        elif(pythonlist.__contains__(cmd[0])):
+          spiterror(f'{cmd[0]} does not exist, but can be installed using "get -py {cmd[0]}"')
+        else:
+          spiterror(f'{cmd[0]} does not exist!')
+    except IndexError:
+      pass
 
+print(f'Welcome to MeltOS {version}.')
 while True:
-	cwd = os.getcwd() # get the cwd. simple
-	username = os.getlogin() # get the user's username for the username@cwd combo
-	tmpexists = exists(f"{homedir}/tmp/old_out") # check if tmp.txt exists
-	if(tmpexists): # if it exists, KILL IT WITH FIRE
-		os.remove(hf"{homedir}/tmp/old_out")
-	icmd = f"{username}@{cwd}:"
-	try: # thanks to Mwalters75 on GitHub for the keyboard interrupt ignorer
-		pcmd = input(icmd) # username@cwd combo
-		read_cmd(pcmd) # run the cmd, duh
-	except KeyboardInterrupt: # do this so that MeltOS doesn't exit
-		print("")
+  tmpexists = os.path.exists(f"{home}/tmp/old_out")
+  if(tmpexists):
+    os.remove(f"{home}/tmp/old_out")
+  try:
+    inp = input(f'{color1}{os.getlogin()}&{platform.node()}{Fore.WHITE}@{color2}{os.getcwd()}{Fore.WHITE}: ')
+    interpretcmd(inp)
+  except KeyboardInterrupt:
+    print('')
