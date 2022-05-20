@@ -1,6 +1,6 @@
 __pycache__
-/mox
-/tmp
+/meltos
 *.moexe
+*.mocfg
 list
 list-py
