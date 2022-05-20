@@ -3,14 +3,19 @@ The MeltOS Project is a Python 3 script that acts as a "mockery of an OS", of so
 
 ## Running
 Linux:
+This will only work if you have python3 installed.
 ```sh
 python3 main.py
 ```  
-MacOS/Windows:  
+MacOS:  
 Unsupported, please make a port.  
   
 Windows:  
-Unsupported, please use [MeltOS For Windows](https://github.com/Touchcreator/melt-os-for-windows)
+**PLEASE NOTE WINDOWS IS NOT FULLY SUPPORTED!**
+This will only work if you have python3 installed.
+```
+python3 main.py
+```
 
 ## Dependencies
 python3\*\*  
@@ -21,5 +26,5 @@ curl\*\*
 
 ## Progress
 <!-- bars from https://changaco.oy.lc/unicode-progress-bars/ -->
-### v1
-▰▰▰▰▰▰▰▰▰▰▰▱▱ 85%
+### v1.x.x.x (next ma/mi/p)
+▱▱▱▱▱▱▱▱▱▱▱▱▱ 0%
