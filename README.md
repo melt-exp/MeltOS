@@ -1,6 +1,9 @@
 # MeltOS
 The MeltOS Project is a Python 3 script that acts as a "mockery of an OS", of sorts. The goal is to make this little Python script into a REAL OS one day.
 
+# Download
+You can download the main python file from https://github.com/Melt2002/MeltOS/raw/main/main.py
+
 ## Running
 Linux:
 This will only work if you have python3 installed.
